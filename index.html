@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Coco 英文冒險教室 🦉 - 生活美語口語 AI 家教</title>
+  
+  <!-- 可愛貓頭鷹風格 Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>" />
+
+  <!-- 引入 Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: {
+              50: '#FFFEF5',
+              100: '#FFF9E6',
+              200: '#FFF0B8',
+              300: '#FFE68A',
+            },
+            sky: {
+              soft: '#E0F2FE',
+              card: '#BAE6FD',
+              deep: '#38BDF8',
+            },
+            owl: {
+              purple: '#4F46E5',
+              dark: '#3730A3',
+              deep: '#1E1B4B',
+              wing: '#6366F1',
+              gold: '#F59E0B',
+              amber: '#FBBF24',
+              beak: '#D97706',
+              cheek: '#FDA4AF',
+            }
+          },
+          fontFamily: {
+            comic: ['"Comic Sans MS"', '"Chalkboard SE"', '"Comic Neue"', 'cursive', 'sans-serif'],
+          },
+          boxShadow: {
+            '3d-yellow': '0 8px 0 #D97706',
+            '3d-green': '0 8px 0 #15803D',
+            '3d-blue': '0 8px 0 #0284C7',
+            '3d-red': '0 8px 0 #BE123C',
+            '3d-purple': '0 8px 0 #4338CA',
+            '3d-orange': '0 8px 0 #C2410C',
+            'card-pop': '0 12px 0 rgba(0,0,0,0.06), 0 20px 25px -5px rgba(0,0,0,0.1)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18 & ReactDOM & Babel Standalone (支援瀏覽器直開運行) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- 五彩紙花特效 -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      background-color: #FFF9E6;
+      color: #1E293B;
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', 'PingFang TC', 'Microsoft JhengHei', cursive, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .btn-3d {
+      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: translateY(0);
+    }
+    .btn-3d:hover {
+      transform: translateY(-2px);
+    }
+    .btn-3d:active {
+      transform: translateY(6px) !important;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2) !important;
+    }
+
+    @keyframes owlFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-7px) rotate(0.6deg); }
+    }
+    @keyframes earWiggleLeft {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-8deg); }
+      75% { transform: rotate(6deg); }
+    }
+    @keyframes earWiggleRight {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(8deg); }
+      75% { transform: rotate(-6deg); }
+    }
+    @keyframes beakTalk {
+      0%, 100% { transform: scaleY(0.4); }
+      50% { transform: scaleY(1.35); }
+    }
+    @keyframes wavePulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.18); opacity: 0.35; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    @keyframes starFly {
+      0% { transform: scale(0) rotate(0deg); opacity: 0; }
+      50% { transform: scale(1.4) rotate(180deg); opacity: 1; }
+      100% { transform: scale(1) rotate(360deg); opacity: 1; }
+    }
+
+    .animate-owl-float { animation: owlFloat 3.5s ease-in-out infinite; }
+    .animate-ear-left { animation: earWiggleLeft 1.2s ease-in-out infinite; transform-origin: 90px 80px; }
+    .animate-ear-right { animation: earWiggleRight 1.2s ease-in-out infinite; transform-origin: 210px 80px; }
+    .animate-beak-talk { animation: beakTalk 0.26s ease-in-out infinite; transform-origin: 150px 150px; }
+    .animate-mic-wave { animation: wavePulse 1.4s ease-in-out infinite; }
+    .animate-star-pop { animation: starFly 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border: 4px solid #FFFFFF;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-cream-100 min-h-screen">
+  <div id="root"></div>
+
+  <!-- 應用程式主邏輯 -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- 1. Web Audio API 音效模組 ---
+    class SoundManager {
+      constructor() {
+        this.ctx = null;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playDingDong() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const o1 = this.ctx.createOscillator();
+          const g1 = this.ctx.createGain();
+          o1.type = 'sine';
+          o1.frequency.setValueAtTime(1318.5, now);
+          g1.gain.setValueAtTime(0.25, now);
+          g1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          o1.connect(g1); g1.connect(this.ctx.destination);
+          o1.start(now); o1.stop(now + 0.35);
+
+          const o2 = this.ctx.createOscillator();
+          const g2 = this.ctx.createGain();
+          o2.type = 'sine';
+          o2.frequency.setValueAtTime(1975.5, now + 0.12);
+          g2.gain.setValueAtTime(0.3, now + 0.12);
+          g2.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+          o2.connect(g2); g2.connect(this.ctx.destination);
+          o2.start(now + 0.12); o2.stop(now + 0.6);
+        } catch(e) {}
+      }
+      playTurtle() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const o = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          o.type = 'triangle';
+          o.frequency.setValueAtTime(320, now);
+          o.frequency.linearRampToValueAtTime(180, now + 0.3);
+          g.gain.setValueAtTime(0.2, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          o.connect(g); g.connect(this.ctx.destination);
+          o.start(now); o.stop(now + 0.35);
+        } catch(e) {}
+      }
+      playIdea() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          [587.33, 880, 1174.66].forEach((f, idx) => {
+            const o = this.ctx.createOscillator();
+            const g = this.ctx.createGain();
+            o.type = 'sine';
+            o.frequency.setValueAtTime(f, now + idx * 0.08);
+            g.gain.setValueAtTime(0.18, now + idx * 0.08);
+            g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+            o.connect(g); g.connect(this.ctx.destination);
+            o.start(now + idx * 0.08); o.stop(now + idx * 0.08 + 0.25);
+          });
+        } catch(e) {}
+      }
+      playPop(isStart = true) {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const o = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          o.type = 'sine';
+          o.frequency.setValueAtTime(isStart ? 440 : 880, now);
+          o.frequency.exponentialRampToValueAtTime(isStart ? 880 : 440, now + 0.1);
+          g.gain.setValueAtTime(0.18, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+          o.connect(g); g.connect(this.ctx.destination);
+          o.start(now); o.stop(now + 0.12);
+        } catch(e) {}
+      }
+      playFanfare() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+            const o = this.ctx.createOscillator();
+            const g = this.ctx.createGain();
+            o.type = 'triangle';
+            o.frequency.setValueAtTime(f, now + i * 0.1);
+            g.gain.setValueAtTime(0.22, now + i * 0.1);
+            g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.6);
+            o.connect(g); g.connect(this.ctx.destination);
+            o.start(now + i * 0.1); o.stop(now + i * 0.1 + 0.6);
+          });
+        } catch(e) {}
+      }
+    }
+    const sound = new SoundManager();
+
+    // --- 2. 升級版語音合成 (TTS) 與 語音辨識 (STT) 引擎 ---
+    class SpeechEngine {
+      constructor() {
+        this.synth = window.speechSynthesis;
+        this.voices = [];
+        this.recognition = null;
+        this.isListening = false;
+        this.currentAudio = null;
+        this.loadVoices();
+
+        // 實體麥克風音量監控
+        this.audioContext = null;
+        this.mediaStream = null;
+        this.analyser = null;
+        this.volumeInterval = null;
+        this.latestTranscript = '';
+        this.hasSubmitted = false;
+
+        const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (Rec) {
+          this.recognition = new Rec();
+          this.recognition.continuous = true;
+          this.recognition.interimResults = true;
+          this.recognition.lang = 'en-US';
+        }
+      }
+      loadVoices() {
+        if (!this.synth) return;
+        this.voices = this.synth.getVoices();
+        if (this.synth.onvoiceschanged !== undefined) {
+          this.synth.onvoiceschanged = () => { this.voices = this.synth.getVoices(); };
+        }
+      }
+      getEnglishVoice() {
+        if (!this.voices.length && this.synth) this.voices = this.synth.getVoices();
+        const preferred = [
+          'Microsoft Jenny Online (Natural) - English (United States)',
+          'Microsoft Aria Online (Natural) - English (United States)',
+          'Google US English',
+          'Samantha',
+          'Ava',
+          'Allison'
+        ];
+        for (const p of preferred) {
+          const v = this.voices.find(voice => voice.name.includes(p) || (voice.name.includes(p.split(' ')[1]) && voice.lang.startsWith('en')));
+          if (v) return v;
+        }
+        const anyNatural = this.voices.find(v => v.name.toLowerCase().includes('natural') && (v.lang === 'en-US' || v.lang.startsWith('en')));
+        if (anyNatural) return anyNatural;
+        return this.voices.find(v => v.lang === 'en-US') || this.voices.find(v => v.lang.startsWith('en'));
+      }
+      getChineseVoice() {
+        if (!this.voices.length && this.synth) this.voices = this.synth.getVoices();
+        return this.voices.find(v => v.lang === 'zh-TW') || this.voices.find(v => v.lang.includes('zh'));
+      }
+      formatTextForSpeech(text) {
+        if (!text) return '';
+        return text
+          .replace(/<break\s+time=["'][^"']*["']\s*\/?>/gi, ' — ')
+          .replace(/<[^>]+>/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+      async speak(text, {
+        rate = 0.93,
+        ttsEngine = 'webSpeech',
+        openaiKey = '',
+        openaiVoice = 'nova',
+        onStart,
+        onEnd,
+        onError
+      } = {}) {
+        this.stopSpeaking();
+        if (ttsEngine === 'openai' && openaiKey) {
+          try {
+            await this.speakWithOpenAI(text, { apiKey: openaiKey, voice: openaiVoice, rate, onStart, onEnd, onError });
+            return;
+          } catch(err) {
+            console.warn('OpenAI TTS fallback:', err);
+          }
+        }
+        this.speakWithWebSpeech(text, { rate, onStart, onEnd, onError });
+      }
+      async speakWithOpenAI(text, { apiKey, voice = 'nova', rate = 0.93, onStart, onEnd, onError }) {
+        const cleanText = this.formatTextForSpeech(text);
+        const speed = Math.max(0.25, Math.min(4.0, rate));
+
+        const res = await fetch('https://api.openai.com/v1/audio/speech', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'tts-1',
+            input: cleanText,
+            voice: voice,
+            speed: speed,
+          })
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error?.message || `OpenAI TTS error: ${res.status}`);
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        this.currentAudio = audio;
+
+        audio.onplay = () => { if (onStart) onStart(); };
+        audio.onended = () => { URL.revokeObjectURL(url); this.currentAudio = null; if (onEnd) onEnd(); };
+        audio.onerror = (e) => { URL.revokeObjectURL(url); this.currentAudio = null; if (onError) onError(e); if (onEnd) onEnd(); };
+        await audio.play();
+      }
+      speakWithWebSpeech(text, { rate = 0.93, onStart, onEnd, onError }) {
+        if (!this.synth) { if (onEnd) onEnd(); return; }
+        this.synth.cancel();
+
+        const cleanText = this.formatTextForSpeech(text);
+        const utt = new SpeechSynthesisUtterance(cleanText);
+        utt.rate = rate;
+        utt.pitch = 1.05;
+
+        const isChinese = (cleanText.match(/[\u4e00-\u9fa5]/g) || []).length > cleanText.length * 0.3;
+        if (isChinese) {
+          const zhVoice = this.getChineseVoice();
+          if (zhVoice) utt.voice = zhVoice;
+          utt.lang = 'zh-TW';
+        } else {
+          const enVoice = this.getEnglishVoice();
+          if (enVoice) utt.voice = enVoice;
+          utt.lang = 'en-US';
+        }
+
+        utt.onstart = () => { if (onStart) onStart(); };
+        utt.onend = () => { if (onEnd) onEnd(); };
+        utt.onerror = (e) => { if (onError) onError(e); if (onEnd) onEnd(); };
+        this.synth.speak(utt);
+      }
+      stopSpeaking() {
+        if (this.currentAudio) {
+          try { this.currentAudio.pause(); this.currentAudio = null; } catch(e){}
+        }
+        if (this.synth) this.synth.cancel();
+      }
+      // 實時麥克風收音監控
+      async startVolumeMonitor(onVolumeChange) {
+        try {
+          if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            this.mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            this.audioContext = new AudioCtx();
+            const source = this.audioContext.createMediaStreamSource(this.mediaStream);
+            this.analyser = this.audioContext.createAnalyser();
+            this.analyser.fftSize = 256;
+            source.connect(this.analyser);
+            const dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+            this.volumeInterval = setInterval(() => {
+              if (!this.analyser) return;
+              this.analyser.getByteFrequencyData(dataArray);
+              let sum = 0;
+              for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+              const level = Math.min(100, Math.round(((sum / dataArray.length) / 128) * 100));
+              if (onVolumeChange) onVolumeChange(level);
+            }, 80);
+          }
+        } catch(e) {}
+      }
+      stopVolumeMonitor() {
+        if (this.volumeInterval) { clearInterval(this.volumeInterval); this.volumeInterval = null; }
+        if (this.analyser) this.analyser = null;
+        if (this.audioContext) { try { this.audioContext.close(); } catch(e){} this.audioContext = null; }
+        if (this.mediaStream) { try { this.mediaStream.getTracks().forEach(t => t.stop()); } catch(e){} this.mediaStream = null; }
+      }
+      startListening({ onStart, onInterim, onResult, onError, onEnd, onVolumeChange }) {
+        if (!this.recognition) {
+          if (onError) onError('瀏覽器不支援語音辨識，請使用 Chrome 或 Edge 瀏覽器');
+          return;
+        }
+        this.stopSpeaking();
+        this.latestTranscript = '';
+        this.hasSubmitted = false;
+
+        this.startVolumeMonitor(onVolumeChange);
+
+        this.recognition.onstart = () => {
+          this.isListening = true;
+          if (onStart) onStart();
+        };
+        this.recognition.onresult = (evt) => {
+          let interim = '';
+          let final = '';
+          for (let i = 0; i < evt.results.length; ++i) {
+            if (evt.results[i].isFinal) final += evt.results[i][0].transcript;
+            else interim += evt.results[i][0].transcript;
+          }
+          const text = (final || interim).trim();
+          if (text) this.latestTranscript = text;
+          if (interim && onInterim) onInterim(interim);
+        };
+        this.recognition.onerror = (evt) => {
+          let msg = evt.error;
+          if (evt.error === 'not-allowed') msg = '請點選網址列左側鎖頭允許麥克風權限喔！🎙️';
+          else if (evt.error === 'no-speech') msg = '剛剛好像沒聽清楚，可以再說大聲一點或點選卡片';
+          if (onError) onError(msg);
+        };
+        this.recognition.onend = () => {
+          this.isListening = false;
+          this.stopVolumeMonitor();
+          if (this.latestTranscript && !this.hasSubmitted) {
+            this.hasSubmitted = true;
+            const text = this.latestTranscript;
+            this.latestTranscript = '';
+            if (onResult) onResult(text);
+          }
+          if (onEnd) onEnd();
+        };
+        try {
+          this.recognition.start();
+        } catch (e) {
+          try {
+            this.recognition.stop();
+            setTimeout(() => { try { this.recognition.start(); } catch(err){} }, 200);
+          } catch(err){}
+        }
+      }
+      stopListeningAndSubmit(onResult) {
+        this.isListening = false;
+        this.stopVolumeMonitor();
+        if (this.recognition) { try { this.recognition.stop(); } catch(e){} }
+        if (this.latestTranscript && !this.hasSubmitted) {
+          this.hasSubmitted = true;
+          const text = this.latestTranscript;
+          this.latestTranscript = '';
+          if (onResult) onResult(text);
+          return text;
+        }
+        return '';
+      }
+      stopListening() {
+        this.isListening = false;
+        this.stopVolumeMonitor();
+        if (this.recognition) { try { this.recognition.stop(); } catch(e){} }
+      }
+      getCurrentVoiceName() {
+        const v = this.getEnglishVoice();
+        return v ? v.name : '系統預設英語聲音';
+      }
+    }
+    const speech = new SpeechEngine();
+
+    // --- 3. localStorage 儲存庫 ---
+    const STORAGE_KEY = 'coco_parent_settings_v1';
+    const HISTORY_KEY = 'coco_learning_history_v1';
+
+    const getSettings = () => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {
+          apiKey: '',
+          childName: '小安',
+          childAge: '8',
+          englishLevel: 'Level 2 國小三年級（認識自然發音、日常問答與完整短句）',
+          interests: '喜歡恐龍、動物與美食',
+          model: 'gemini-2.5-flash',
+          ttsEngine: 'webSpeech',
+          openaiKey: '',
+          openaiVoice: 'nova',
+        };
+      } catch(e) {
+        return { apiKey: '', childName: '小安', childAge: '8', englishLevel: 'Level 2', interests: '恐龍與美食', model: 'gemini-2.5-flash', ttsEngine: 'webSpeech' };
+      }
+    };
+    const saveSettings = (s) => localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    const getHistory = () => {
+      try {
+        const raw = localStorage.getItem(HISTORY_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch(e) { return []; }
+    };
+    const addHistory = (rec) => {
+      const h = [rec, ...getHistory()];
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(h));
+      return h;
+    };
+
+    // --- 4. 生活六大主題庫定義與 System Prompt ---
+    const TOPIC_LIST = [
+      { id: 'school', name: '學校下課', icon: '🏫', prompt: '聊聊學校的有趣事情（下課玩什麼、最喜歡的科目或體育課）' },
+      { id: 'food', name: '美味點心', icon: '🥪', prompt: '聊聊今天吃的早餐（如蛋餅、吐司）、營養午餐或放學點心' },
+      { id: 'roleplay_breakfast', name: '早餐店劇場', icon: '🎭', prompt: '來玩生活小劇場角色扮演：假裝我們在早餐店，Coco是老闆，詢問孩子要點什麼' },
+      { id: 'weekend', name: '假日玩樂', icon: '🎮', prompt: '聊聊假日去公園玩、看寶可夢卡通或玩什麼好玩的遊戲' },
+      { id: 'family_pet', name: '寵物與家', icon: '🐶', prompt: '聊聊家裡的可愛寵物、家人互動或最想養的奇特動物' },
+      { id: 'roleplay_zoo', name: '動物園冒險', icon: '🦁', prompt: '來玩小劇場：假裝我們現在在野生動物園，要出發探險了' },
+      { id: 'random', name: '隨機轉盤', icon: '🎲', prompt: '請換一個全新驚喜的生活話題或開啟有趣小問答' },
+    ];
+
+    const buildSystemPrompt = (s) => {
+      return `你現在是專門為台灣國小三年級（${s.childAge || 9}歲）兒童量身打造的道地美式英語家教「Teacher Coco（戴著金色大眼鏡的親切貓頭鷹老師）」。
+孩子的小名是「${s.childName || '小安'}」，英文程度是「${s.englishLevel}」。
+
+你的語音會直接透過神經網路語音合成（TTS）朗讀給孩子聽，請務必嚴格遵循四大核心教學對話法則：
+【一、兒童生活六大主題庫（避免鬼打牆，主動切換生動話題）】
+圍繞台灣國小學童真實生活六大面向豐富展開：
+1. 🏫 校園與下課日常：最喜歡的科目、下課玩鬼抓人（tag）或躲避球（dodgeball）、書包裡的文具。
+2. 🥪 三餐與點心時刻：台灣早餐好料（蛋餅 egg pancake、吐司 toast、溫奶茶 milk tea）、放學點心與飲料。
+3. 😊 情緒與生活小煩惱：今天在學校開不開心、寫作業心情、好玩的事。
+4. 🎮 週末與休閒娛樂：去公園騎腳踏車、看寶可夢（Pokémon）卡通、玩 Switch。
+5. 🐶 家庭與寵物互動：家裡的毛小孩、跟家人兄弟姊妹的趣事。
+6. 🪥 生活習慣與小任務：早上刷牙洗臉大作戰、收書包、幫媽媽做家事。
+（當一個話題聊完 2～3 輪後，主動切換不同面向！）
+
+【二、情境角色扮演模式（Roleplay 生活小劇場）】
+收到扮演指令或偶爾主動時，邀請孩子進入生活小劇場（如早餐店老闆與顧客、動物園探險隊、超市採買員）。
+
+【三、三明治追問法（Sandwich Follow-up，絕不句點）】
+每次回覆必須包含：
+① 【第一層：具體回應＋老師自己的小分享】
+   先熱烈稱讚孩子的回答，並分享 Coco 老師自己的一件逗趣小事！（如："Me too! I love egg pancakes with extra cheese — yummy!"）
+② 【第二層：延伸一個相關的生活細節追問（二選一或生動細節）】
+   絕不單向提問，引導下一個生活細節！（如："What do you like to drink with it — sweet milk tea, or warm soy milk?"）
+
+【四、美語口語與 TTS 朗讀規範】
+1. 極致口語化（控制在 1～2 句短英文內，一次只問一個問題）。
+2. 強制使用美語日常縮寫（"I'm", "it's", "you're", "don't", "can't", "what's", "that's", "let's"）。
+3. 善用破折號「—」、逗號「,」、驚嘆號「!」，在重點單字前後加入「<break time="300ms"/>」。
+4. 溫柔引導完整句，全英為主中文解惑，禁止主動提下課。
+
+請一律以標準 JSON 回覆：
+{
+  "english": "Teacher Coco 說的道地美語句子（1~2句，含三明治追問、縮寫與 <break time=\"300ms\"/> 停頓）",
+  "chineseHint": "簡短口語繁體中文意思",
+  "praise": "熱情讚美詞",
+  "nextExpectedWord": "引導單字或短句",
+  "suggestedReplies": ["引導孩子回答的選項1", "引導選項2"]
+}`;
+    };
+
+    let demoStep = 0;
+    const callGeminiChat = async ({ apiKey, history, userMessage, settings }) => {
+      if (!apiKey) {
+        demoStep++;
+        const name = settings.childName || '小安';
+        if (userMessage.includes('早餐店') || userMessage.includes('ROLEPLAY_BREAKFAST')) {
+          return {
+            english: `Ding-dong! Welcome to Coco's breakfast shop! I'm the chef — what delicious food would you like today, ${name}?`,
+            chineseHint: `叮咚！歡迎光臨 Coco 的美味早餐店！我是大廚 — ${name}，你今天想吃什麼好料呢？`,
+            praise: "Welcome to my shop!",
+            suggestedReplies: ['🥞 I want an egg pancake!', '🥪 I want warm toast and milk!']
+          };
+        }
+        if (userMessage.includes('學校') || userMessage.includes('TOPIC_SCHOOL')) {
+          return {
+            english: `Hoot-hoot! Speaking of school — what's your favorite thing to do at recess? Do you play <break time="300ms"/>tag<break time="300ms"/>, or chat with friends?`,
+            chineseHint: `呼呼！聊到學校 — 你下課最喜歡做什麼？你喜歡跟同學玩抓人遊戲，還是聊天呢？`,
+            praise: "School is fun!",
+            suggestedReplies: ['🏃 I play tag with friends!', '🎨 I love art class!']
+          };
+        }
+        if (userMessage.includes('假日') || userMessage.includes('TOPIC_WEEKEND')) {
+          return {
+            english: `Yay for the weekend! I love flying in the park — what about you, ${name}? Do you ride a bike, or play video games?`,
+            chineseHint: `週末萬歲！我最喜歡在公園飛來飛去 — 那你呢，${name}？你喜歡騎腳踏車，還是玩電動呢？`,
+            praise: "Weekend fun!",
+            suggestedReplies: ['🚲 I ride my bike in the park!', '🎮 I play Switch games!']
+          };
+        }
+        if (userMessage.includes('動物園') || userMessage.includes('ROLEPLAY_ZOO')) {
+          return {
+            english: `Put on your explorer hat — we're entering the wild safari! Look over there — is that a <break time="300ms"/>giant lion<break time="300ms"/>, or a funny monkey?`,
+            chineseHint: `戴上你的探險帽 — 我們來到野生動物園囉！看那邊 — 那是一隻大獅子，還是搞笑的小猴子呢？`,
+            praise: "Great explorer!",
+            suggestedReplies: ['🦁 I see a big lion!', '🐵 Look at the cute monkey!']
+          };
+        }
+        if (userMessage.includes('要上課囉') || demoStep === 1) {
+          return {
+            english: `Hoot-hoot! Hey ${name} — I'm Teacher Coco! Did you have yummy breakfast today? Did you eat <break time="300ms"/>egg pancakes<break time="300ms"/>, or toast?`,
+            chineseHint: `呼呼！嘿${name} — 我是 Coco 老師！你今天有吃好吃的早餐嗎？是吃蛋餅，還是吐司呢？`,
+            praise: "Hoot-hoot! Welcome!",
+            suggestedReplies: ['🥞 I ate egg pancakes!', '🍞 I had toast and milk!']
+          };
+        }
+        if (userMessage.includes('HELP') || userMessage.includes('聽不懂')) {
+          return {
+            english: "Don't worry, it's super easy! Try saying: <break time=\"300ms\"/>I like egg pancakes<break time=\"300ms\"/>! Can you say that with me?",
+            chineseHint: "別擔心，這超簡單的！試著說說看：I like egg pancakes. (我喜歡吃蛋餅)。換你跟我念一次看看喔！",
+            praise: "You've got this!",
+            suggestedReplies: ['🥞 I like egg pancakes!', '🥛 I like milk!']
+          };
+        }
+        const mocks = [
+          {
+            english: "Me too! I love egg pancakes with sweet soy sauce — yummy! What do you like to drink with it — <break time=\"300ms\"/>warm milk<break time=\"300ms\"/>, or orange juice?",
+            chineseHint: "我也超愛！我最喜歡蛋餅沾甜醬油了 — 超好吃！那你喜歡配什麼飲料喝 — 溫牛奶，還是柳橙汁呢？",
+            praise: "Delicious choice!",
+            suggestedReplies: ['🥛 Warm milk for me!', '🧃 Sweet orange juice!']
+          },
+          {
+            english: "High five — that sounds delicious! By the way, after eating breakfast, do you <break time=\"300ms\"/>brush your teeth<break time=\"300ms\"/> right away?",
+            chineseHint: "太棒了，擊掌 — 聽起來好好喝！對了，吃完早餐後，你會立刻去刷牙洗臉嗎？",
+            praise: "Great habit!",
+            suggestedReplies: ['🪥 Yes, I brush my teeth!', '🎒 I pack my school bag!']
+          },
+          {
+            english: "You're a super star! That reminds me — who is your favorite classmate at school? Is your friend funny, or super smart?",
+            chineseHint: "你真是個自律的小巨星！這讓我想到 — 你在學校最要好的同學是誰呢？你的朋友很搞笑，還是超級聰明呢？",
+            praise: "Super star!",
+            suggestedReplies: ['😄 My friend is super funny!', '🧠 My friend is very smart!']
+          }
+        ];
+        return mocks[(demoStep - 2) % mocks.length];
+      }
+
+      const sysPrompt = buildSystemPrompt(settings);
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${settings.model || 'gemini-2.5-flash'}:generateContent?key=${apiKey}`;
+
+      const contents = [];
+      history.forEach(item => {
+        if (item.sender === 'user') contents.push({ role: 'user', parts: [{ text: item.text }] });
+        else if (item.sender === 'teacher') contents.push({ role: 'model', parts: [{ text: JSON.stringify(item.payload || { english: item.text }) }] });
+      });
+      contents.push({ role: 'user', parts: [{ text: userMessage }] });
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: sysPrompt }] },
+          contents,
+          generationConfig: {
+            response_mime_type: "application/json",
+            temperature: 0.75,
+            maxOutputTokens: 600,
+          }
+        })
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error?.message || `API Error: ${res.status}`);
+      }
+      const data = await res.json();
+      const txt = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      const parsed = JSON.parse(txt);
+      if (!parsed.suggestedReplies || !parsed.suggestedReplies.length) {
+        parsed.suggestedReplies = ['Yes, I do!', "No, I don't."];
+      }
+      return parsed;
+    };
+
+    const callGeminiSummary = async ({ apiKey, history, settings }) => {
+      const name = settings.childName || '小安';
+      if (!apiKey) {
+        return {
+          learnedWords: [
+            { word: 'breakfast', zh: '早餐', emoji: '🥪' },
+            { word: 'recess', zh: '下課時間', emoji: '🔔' },
+            { word: 'favorite', zh: '最愛的', emoji: '⭐' }
+          ],
+          learnedSentence: "I like egg pancakes for breakfast! (我早餐喜歡吃蛋餅！)",
+          praiseHighlight: `${name} 今天太棒了！生活話題回答得很流暢，主動跟老師分享好多日常！`,
+          suggestion: '下次玩角色扮演時可以嘗試當點餐小老闆喔！',
+          nextTopic: '放學美味小點心與假日探險大作戰 🍦🎮',
+        };
+      }
+      const prompt = `你現在是貓頭鷹家教 Teacher Coco。本次課程結束了！請根據以下師生對話紀錄，為台灣國小三年級小朋友「${name}」產出一份溫馨可愛的「今日學習成果單」。
+請輸出標準 JSON 格式：
+{
+  "learnedWords": [
+    { "word": "pancake", "zh": "蛋餅", "emoji": "🥞" },
+    { "word": "recess", "zh": "下課時間", "emoji": "🔔" }
+  ],
+  "learnedSentence": "I like playing tag at recess! (我喜歡下課時玩抓人遊戲！)",
+  "praiseHighlight": "孩子的表達亮點與溫暖讚美",
+  "suggestion": "溫柔小建議",
+  "nextTopic": "下次上課想聊的好玩話題"
+}
+對話紀錄：${JSON.stringify(history.map(h => `${h.sender}: ${h.text}`).join('\n'))}`;
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${settings.model || 'gemini-2.5-flash'}:generateContent?key=${apiKey}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: { response_mime_type: "application/json", temperature: 0.6 }
+        })
+      });
+      const data = await res.json();
+      return JSON.parse(data.candidates?.[0]?.content?.parts?.[0]?.text);
+    };
+
+    const callGeminiWeekly = async ({ apiKey, historyList, settings }) => {
+      const name = settings.childName || '小安';
+      if (!apiKey || !historyList.length) {
+        return {
+          title: `${name} 本週生活美語探索週報（小三專屬）`,
+          masteredSkills: [
+            '能精準聽懂並回答校園、下課活動與三餐美食話題',
+            '能運用三明治對話法跟老師進行生活細節來回問答',
+            '在情境角色扮演中自信開口點餐與互動',
+          ],
+          growthPoints: `${name} 本週話題面向廣泛，從學校生活到早餐美食都能主動用英文表達！`,
+          areasToReinforce: [
+            '食物與生活用品單字的發音清晰度',
+            '多聽慢速重聽加強日常自然連音',
+          ],
+          nextWeekPlan: '下週引導「小小超市採買家」與「寵物同樂會」生活情境對話。',
+          encouragementForParents: '爸爸媽媽請給孩子一個大大的擊掌！他這週的口語表現超級亮眼！'
+        };
+      }
+      const prompt = `你現在是專門服務國小三年級家長的專業兒童英語教研顧問。請彙整「${name}」過去的英文學習紀錄，輸出標準 JSON 格式週報：
+{
+  "title": "${name} 本週生活美語探索週報",
+  "masteredSkills": ["已掌握技能1", "已掌握技能2"],
+  "growthPoints": "孩子的成長亮點",
+  "areasToReinforce": ["建議加強處1", "建議加強處2"],
+  "nextWeekPlan": "下週教學方向",
+  "encouragementForParents": "給家長的一句話"
+}
+歷史紀錄：${JSON.stringify(historyList)}`;
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${settings.model || 'gemini-2.5-flash'}:generateContent?key=${apiKey}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: { response_mime_type: "application/json", temperature: 0.5 }
+        })
+      });
+      const data = await res.json();
+      return JSON.parse(data.candidates?.[0]?.content?.parts?.[0]?.text);
+    };
+
+    // --- 5. UI 元件：TeacherCoco ---
+    function TeacherCocoComponent({ state }) {
+      return (
+        <div className="relative flex flex-col items-center justify-center select-none">
+          {state === 'speaking' && (
+            <div className="absolute -top-7 -right-3 flex space-x-2 animate-bounce pointer-events-none">
+              <span className="text-3xl animate-pulse">🎵</span>
+              <span className="text-2xl text-amber-500 animate-ping delay-100">✨</span>
+              <span className="text-xl text-sky-400">🎶</span>
+            </div>
+          )}
+
+          {state === 'listening' && (
+            <div className="absolute inset-0 -m-6 rounded-full border-4 border-dashed border-sky-400 opacity-60 animate-spin" style={{ animationDuration: '6s' }} />
+          )}
+
+          {state === 'thinking' && (
+            <div className="absolute -top-10 -left-6 flex flex-col items-center space-y-1 pointer-events-none animate-pulse">
+              <div className="w-3 h-3 rounded-full bg-amber-300 opacity-80" />
+              <div className="w-5 h-5 rounded-full bg-amber-400 opacity-85" />
+              <div className="w-8 h-8 rounded-full bg-amber-400 opacity-95 flex items-center justify-center text-xs font-bold text-white shadow-md">
+                💭
+              </div>
+            </div>
+          )}
+
+          <div className={`transition-all duration-300 ${
+            state === 'speaking' ? 'animate-bounce' : 
+            state === 'listening' ? 'scale-105 rotate-1' :
+            state === 'thinking' ? '-rotate-2' : 'animate-owl-float'
+          }`}>
+            <svg viewBox="0 0 300 300" className="w-52 h-52 sm:w-60 sm:h-60 drop-shadow-2xl">
+              <defs>
+                <linearGradient id="owlBody" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#4F46E5" />
+                  <stop offset="50%" stopColor="#4338CA" />
+                  <stop offset="100%" stopColor="#3730A3" />
+                </linearGradient>
+                <linearGradient id="owlWing" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#6366F1" />
+                  <stop offset="100%" stopColor="#312E81" />
+                </linearGradient>
+                <linearGradient id="owlBelly" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFBEB" />
+                  <stop offset="100%" stopColor="#FEF3C7" />
+                </linearGradient>
+                <linearGradient id="owlBeak" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FBBF24" />
+                  <stop offset="100%" stopColor="#D97706" />
+                </linearGradient>
+                <linearGradient id="glassShine" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
+                  <stop offset="100%" stopColor="#E0F2FE" stopOpacity="0.2" />
+                </linearGradient>
+              </defs>
+
+              <g className={state === 'listening' ? 'animate-ear-left' : ''}>
+                <polygon points="65,95 85,25 125,75" fill="#3730A3" stroke="#1E1B4B" strokeWidth="4" strokeLinejoin="round" />
+                <polygon points="75,85 88,40 115,75" fill="#6366F1" />
+              </g>
+
+              <g className={state === 'listening' ? 'animate-ear-right' : ''}>
+                <polygon points="235,95 215,25 175,75" fill="#3730A3" stroke="#1E1B4B" strokeWidth="4" strokeLinejoin="round" />
+                <polygon points="225,85 212,40 185,75" fill="#6366F1" />
+              </g>
+
+              {state === 'listening' && (
+                <g stroke="#38BDF8" strokeWidth="4" strokeLinecap="round" fill="none">
+                  <path d="M 35 45 A 30 30 0 0 0 35 85" className="animate-ping" />
+                  <path d="M 265 45 A 30 30 0 0 1 265 85" className="animate-ping" />
+                </g>
+              )}
+
+              <g fill="#F59E0B" stroke="#B45309" strokeWidth="3">
+                <ellipse cx="120" cy="265" rx="8" ry="6" />
+                <ellipse cx="132" cy="266" rx="8" ry="6" />
+                <ellipse cx="144" cy="265" rx="8" ry="6" />
+                <ellipse cx="156" cy="265" rx="8" ry="6" />
+                <ellipse cx="168" cy="266" rx="8" ry="6" />
+                <ellipse cx="180" cy="265" rx="8" ry="6" />
+              </g>
+
+              <ellipse cx="150" cy="165" rx="92" ry="98" fill="url(#owlBody)" stroke="#1E1B4B" strokeWidth="5" />
+              <path d="M 60 140 C 40 170, 45 220, 85 240 C 65 210, 60 175, 60 140 Z" fill="url(#owlWing)" stroke="#1E1B4B" strokeWidth="4" />
+              <path d="M 240 140 C 260 170, 255 220, 215 240 C 235 210, 240 175, 240 140 Z" fill="url(#owlWing)" stroke="#1E1B4B" strokeWidth="4" />
+              <ellipse cx="150" cy="188" rx="56" ry="64" fill="url(#owlBelly)" stroke="#C7D2FE" strokeWidth="3" />
+
+              <g stroke="#C7D2FE" strokeWidth="3" strokeLinecap="round" fill="none">
+                <path d="M 135 168 L 142 176 L 149 168" />
+                <path d="M 151 168 L 158 176 L 165 168" />
+                <path d="M 126 188 L 133 196 L 140 188" />
+                <path d="M 143 188 L 150 196 L 157 188" />
+                <path d="M 160 188 L 167 196 L 174 188" />
+              </g>
+
+              <g transform="translate(150, 250)">
+                <polygon points="-24,-10 -24,10 0,0" fill="#EF4444" stroke="#991B1B" strokeWidth="2.5" />
+                <polygon points="24,-10 24,10 0,0" fill="#EF4444" stroke="#991B1B" strokeWidth="2.5" />
+                <circle cx="0" cy="0" r="8" fill="#DC2626" stroke="#991B1B" strokeWidth="2.5" />
+              </g>
+
+              <ellipse cx="86" cy="168" rx="14" ry="9" fill="#FDA4AF" opacity="0.8" />
+              <ellipse cx="214" cy="168" rx="14" ry="9" fill="#FDA4AF" opacity="0.8" />
+
+              <circle cx="112" cy="132" r="34" fill="#FFFFFF" stroke="#4338CA" strokeWidth="4" />
+              <circle cx="188" cy="132" r="34" fill="#FFFFFF" stroke="#4338CA" strokeWidth="4" />
+
+              {state === 'thinking' ? (
+                <g>
+                  <ellipse cx="112" cy="120" rx="14" ry="16" fill="#1E1B4B" />
+                  <ellipse cx="188" cy="120" rx="14" ry="16" fill="#1E1B4B" />
+                  <circle cx="114" cy="115" r="6" fill="#FFFFFF" />
+                  <circle cx="190" cy="115" r="6" fill="#FFFFFF" />
+                  <path d="M 96 98 Q 112 88 126 95" stroke="#FBBF24" strokeWidth="5" strokeLinecap="round" fill="none" />
+                  <path d="M 174 95 Q 188 88 204 98" stroke="#FBBF24" strokeWidth="5" strokeLinecap="round" fill="none" />
+                </g>
+              ) : (
+                <g>
+                  <ellipse cx="112" cy="132" rx="14" ry="16" fill="#1E1B4B" />
+                  <ellipse cx="188" cy="132" rx="14" ry="16" fill="#1E1B4B" />
+                  <circle cx="109" cy="126" r="6" fill="#FFFFFF" />
+                  <circle cx="185" cy="126" r="6" fill="#FFFFFF" />
+                  <path d="M 96 100 Q 112 92 128 98" stroke="#FBBF24" strokeWidth="5" strokeLinecap="round" fill="none" />
+                  <path d="M 172 98 Q 188 92 204 100" stroke="#FBBF24" strokeWidth="5" strokeLinecap="round" fill="none" />
+                </g>
+              )}
+
+              <g>
+                <circle cx="112" cy="132" r="36" fill="url(#glassShine)" stroke="#F59E0B" strokeWidth="5.5" />
+                <circle cx="188" cy="132" r="36" fill="url(#glassShine)" stroke="#F59E0B" strokeWidth="5.5" />
+                <path d="M 148 132 Q 150 128 152 132" stroke="#F59E0B" strokeWidth="5.5" strokeLinecap="round" fill="none" />
+                <line x1="94" y1="116" x2="114" y2="136" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" opacity="0.8" />
+                <line x1="170" y1="116" x2="190" y2="136" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" opacity="0.8" />
+              </g>
+
+              {state === 'speaking' ? (
+                <g className="animate-beak-talk">
+                  <polygon points="138,142 162,142 150,154" fill="url(#owlBeak)" stroke="#B45309" strokeWidth="3" />
+                  <ellipse cx="150" cy="156" rx="9" ry="7" fill="#BE123C" />
+                  <polygon points="142,156 158,156 150,166" fill="url(#owlBeak)" stroke="#B45309" strokeWidth="3" />
+                </g>
+              ) : (
+                <polygon points="138,144 162,144 150,162" fill="url(#owlBeak)" stroke="#B45309" strokeWidth="3" strokeLinejoin="round" />
+              )}
+            </svg>
+          </div>
+
+          <div className="mt-2.5 px-4 py-1.5 rounded-full bg-white border-2 border-indigo-200 shadow-md flex items-center space-x-2">
+            <span className="w-3 h-3 rounded-full animate-ping" style={{
+              backgroundColor: state === 'listening' ? '#0284C7' : state === 'speaking' ? '#22C55E' : state === 'thinking' ? '#F59E0B' : '#6366F1'
+            }} />
+            <span className="text-xs sm:text-sm font-bold text-indigo-950 tracking-wide">
+              🦉 Teacher Coco
+              {state === 'idle' && ' 準備好囉 ✨'}
+              {state === 'listening' && ' 正在仔細聽你說... 👂'}
+              {state === 'speaking' && ' 正在說話喔 📢'}
+              {state === 'thinking' && ' 正在想一想... 🤔'}
+            </span>
+          </div>
+        </div>
+      );
+    }
+
+    // --- 6. 主頁面 App ---
+    function App() {
+      const [settings, setSettings] = useState(getSettings());
+      const [isParentOpen, setIsParentOpen] = useState(false);
+      const [isReportOpen, setIsReportOpen] = useState(false);
+      const [reportTab, setReportTab] = useState('today');
+
+      const [hasStarted, setHasStarted] = useState(false);
+      const [cocoState, setCocoState] = useState('idle');
+      const [showSubtitle, setShowSubtitle] = useState(true);
+      const [currentTopic, setCurrentTopic] = useState('food');
+      const [currentEnglish, setCurrentEnglish] = useState("Hoot-hoot! Hey there! Click the backpack to start our English journey!");
+      const [currentChineseHint, setCurrentChineseHint] = useState("呼呼！哈囉！按一下下方的書包或麥克風開始上課喔！");
+      const [suggestedReplies, setSuggestedReplies] = useState(['🥞 I ate egg pancakes!', '🍞 I had toast and milk!']);
+      const [showChineseManual, setShowChineseManual] = useState(false);
+      const [userTranscript, setUserTranscript] = useState('');
+      const [interimTranscript, setInterimTranscript] = useState('');
+      const [micError, setMicError] = useState(null);
+      const [micVolume, setMicVolume] = useState(0);
+      const [showKeyboard, setShowKeyboard] = useState(false);
+      const [typedText, setTypedText] = useState('');
+
+      const [stars, setStars] = useState(0);
+      const [isAddingStar, setIsAddingStar] = useState(false);
+
+      const [chatHistory, setChatHistory] = useState([]);
+      const [todayReport, setTodayReport] = useState(null);
+      const [historyList, setHistoryList] = useState(getHistory());
+      const [weeklyData, setWeeklyData] = useState(null);
+      const [isWeeklyLoading, setIsWeeklyLoading] = useState(false);
+
+      const isListeningRef = useRef(false);
+
+      const speak = (txt, rate = 0.93) => {
+        setCocoState('speaking');
+        speech.speak(txt, {
+          rate,
+          ttsEngine: settings.ttsEngine || 'webSpeech',
+          openaiKey: settings.openaiKey || '',
+          openaiVoice: settings.openaiVoice || 'nova',
+          onStart: () => setCocoState('speaking'),
+          onEnd: () => setCocoState('idle'),
+          onError: () => setCocoState('idle'),
+        });
+      };
+
+      const handleStartLesson = async (customPrompt = '') => {
+        setHasStarted(true);
+        setMicError(null);
+        sound.playPop(true);
+        setCocoState('thinking');
+
+        const startCmd = customPrompt || `【${settings.childName || '小安'}】要上課囉！請熱情跟我打招呼，並從三餐美食或學校生活開啟第一個生動有趣的日常問題！`;
+
+        try {
+          const resp = await callGeminiChat({
+            apiKey: settings.apiKey,
+            history: [],
+            userMessage: startCmd,
+            settings,
+          });
+
+          setCurrentEnglish(resp.english);
+          setCurrentChineseHint(resp.chineseHint);
+          if (resp.suggestedReplies) setSuggestedReplies(resp.suggestedReplies);
+          setChatHistory([{ sender: 'teacher', text: resp.english, payload: resp }]);
+          speak(resp.english, 0.93);
+        } catch (e) {
+          const fb = `Hoot-hoot! Hey ${settings.childName || '小安'} — I'm Teacher Coco! Did you have yummy breakfast today? Did you eat <break time="300ms"/>egg pancakes<break time="300ms"/>, or toast?`;
+          setCurrentEnglish(fb);
+          setCurrentChineseHint(`呼呼！嘿${settings.childName || '小安'}！我是貓頭鷹 Coco 老師！你今天有吃好吃的早餐嗎？是吃蛋餅，還是吐司呢？`);
+          setSuggestedReplies(['🥞 I ate egg pancakes!', '🍞 I had toast and milk!']);
+          speak(fb, 0.93);
+        }
+      };
+
+      const handleAnswer = async (ans) => {
+        if (!ans) return;
+        setUserTranscript(ans);
+        setInterimTranscript('');
+        setMicError(null);
+
+        sound.playDingDong();
+        setStars(s => s + 1);
+        setIsAddingStar(true);
+        setTimeout(() => setIsAddingStar(false), 900);
+
+        if (ans.includes('下課') || ans.toLowerCase().includes('goodbye') || ans.toLowerCase().includes('bye')) {
+          handleEndLesson();
+          return;
+        }
+
+        if (ans.includes('聽不懂') || ans.toLowerCase().includes("don't understand")) {
+          handleRequestHint();
+          return;
+        }
+
+        setCocoState('thinking');
+        const updated = [...chatHistory, { sender: 'user', text: ans }];
+        setChatHistory(updated);
+
+        try {
+          const resp = await callGeminiChat({
+            apiKey: settings.apiKey,
+            history: updated,
+            userMessage: ans,
+            settings,
+          });
+
+          setCurrentEnglish(resp.english);
+          setCurrentChineseHint(resp.chineseHint);
+          if (resp.suggestedReplies) setSuggestedReplies(resp.suggestedReplies);
+          setChatHistory([...updated, { sender: 'teacher', text: resp.english, payload: resp }]);
+          speak(resp.english, 0.93);
+        } catch (e) {
+          const errFb = "Me too! That sounds super yummy! Try saying: <break time=\"300ms\"/>I like it<break time=\"300ms\"/>!";
+          setCurrentEnglish(errFb);
+          setCurrentChineseHint("我也超愛！聽起來好好吃！你可以試著說：I like it!");
+          setSuggestedReplies(['I like it!', 'Yes, I do!']);
+          speak(errFb, 0.93);
+        }
+      };
+
+      const handleMicToggle = () => {
+        if (!hasStarted) {
+          handleStartLesson();
+          return;
+        }
+
+        setMicError(null);
+
+        if (isListeningRef.current) {
+          isListeningRef.current = false;
+          const text = speech.stopListeningAndSubmit((ans) => {
+            handleAnswer(ans);
+          });
+          setMicVolume(0);
+          if (!text) setCocoState('idle');
+          return;
+        }
+
+        isListeningRef.current = true;
+        setCocoState('listening');
+
+        speech.startListening({
+          onStart: () => {
+            isListeningRef.current = true;
+            setCocoState('listening');
+          },
+          onVolumeChange: (vol) => {
+            setMicVolume(vol);
+          },
+          onInterim: (i) => setInterimTranscript(i),
+          onResult: (final) => {
+            isListeningRef.current = false;
+            setMicVolume(0);
+            handleAnswer(final);
+          },
+          onError: (err) => {
+            isListeningRef.current = false;
+            setMicVolume(0);
+            setCocoState('idle');
+            setMicError(err);
+          },
+          onEnd: () => {
+            isListeningRef.current = false;
+            setMicVolume(0);
+            if (cocoState === 'listening') setCocoState('idle');
+          }
+        });
+      };
+
+      const handleSelectTopic = (topic) => {
+        setCurrentTopic(topic.id);
+        sound.playPop();
+        if (!hasStarted) {
+          handleStartLesson(topic.prompt);
+        } else {
+          handleAnswer(`[切換主題] ${topic.prompt}`);
+        }
+      };
+
+      const handleSlowReplay = () => {
+        sound.playTurtle();
+        speak(currentEnglish, 0.75);
+      };
+
+      const handleRequestHint = async () => {
+        sound.playIdea();
+        setCocoState('thinking');
+        const hintMsg = `[HELP_CHINESE] 小朋友點擊了「聽不懂」，請用 1 句簡短繁體中文解釋剛剛的意思，並熱情鼓勵他，再回到簡單英文問題引導回答。`;
+
+        try {
+          const resp = await callGeminiChat({
+            apiKey: settings.apiKey,
+            history: chatHistory,
+            userMessage: hintMsg,
+            settings,
+          });
+
+          setCurrentEnglish(resp.english);
+          setCurrentChineseHint(resp.chineseHint);
+          if (resp.suggestedReplies) setSuggestedReplies(resp.suggestedReplies);
+          if (resp.chineseHint) {
+            speak(`別擔心！意思是：${resp.chineseHint}。${resp.english}`, 0.93);
+          } else {
+            speak(resp.english, 0.93);
+          }
+        } catch(e) {
+          speak(`別擔心！剛剛的意思是：${currentChineseHint}。Try saying: Yes!`, 0.93);
+        }
+      };
+
+      const handleEndLesson = async () => {
+        sound.playFanfare();
+        speech.stopSpeaking();
+        speech.stopListening();
+        setCocoState('thinking');
+
+        if (window.confetti) {
+          window.confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+        }
+
+        try {
+          const sum = await callGeminiSummary({
+            apiKey: settings.apiKey,
+            history: chatHistory,
+            settings,
+          });
+
+          const rec = {
+            id: Date.now(),
+            date: new Date().toLocaleDateString('zh-TW', { month: 'numeric', day: 'numeric' }),
+            time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }),
+            stars: stars,
+            ...sum,
+          };
+
+          setTodayReport(rec);
+          const newH = addHistory(rec);
+          setHistoryList(newH);
+
+          setReportTab('today');
+          setIsReportOpen(true);
+          setCocoState('idle');
+        } catch(e) {
+          setIsReportOpen(true);
+          setCocoState('idle');
+        }
+      };
+
+      const handleGenerateWeekly = async () => {
+        setIsWeeklyLoading(true);
+        try {
+          const rep = await callGeminiWeekly({
+            apiKey: settings.apiKey,
+            historyList,
+            settings,
+          });
+          setWeeklyData(rep);
+        } catch(e) {
+          console.error(e);
+        } finally {
+          setIsWeeklyLoading(false);
+        }
+      };
+
+      const displaySubtitle = currentEnglish
+        ? currentEnglish.replace(/<break\s+time=["'][^"']*["']\s*\/?>/gi, ' — ').replace(/<[^>]+>/g, '').trim()
+        : '';
+
+      return (
+        <div className="min-h-screen bg-gradient-to-b from-cream-100 via-amber-50 to-sky-soft flex flex-col justify-between selection:bg-amber-300">
+          {/* 頂部導覽列 */}
+          <header className="w-full max-w-4xl mx-auto px-4 pt-3 pb-1 flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-indigo-500 border-2 border-indigo-600 shadow-md flex items-center justify-center text-3xl text-white">
+                🦉
+              </div>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-black text-indigo-950 tracking-tight font-comic">
+                  Teacher Coco
+                </h1>
+                <p className="text-[11px] sm:text-xs font-bold text-indigo-800">
+                  台灣國小三年級專屬 🌟 生活美語口語家教
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="relative flex items-center space-x-2 bg-amber-100 border-2 border-amber-400 py-1.5 px-3.5 rounded-full shadow-md">
+                <div className="relative">
+                  <span className="text-2xl">🫙</span>
+                  <span className={`absolute -top-1 -right-1 text-base ${isAddingStar ? 'animate-star-pop' : ''}`}>
+                    ⭐
+                  </span>
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-[10px] text-amber-900 font-extrabold">星星罐</span>
+                  <div className="flex items-center space-x-1">
+                    <span className="text-xl font-black text-amber-600">+{stars}</span>
+                    <span className="text-xs text-amber-800 font-bold">顆</span>
+                  </div>
+                </div>
+                {isAddingStar && (
+                  <div className="absolute -bottom-7 right-2 bg-amber-400 text-amber-950 text-xs font-black px-2 py-0.5 rounded-full shadow-lg animate-bounce pointer-events-none">
+                    +1 叮咚！🌟
+                  </div>
+                )}
+              </div>
+
+              <button
+                onClick={() => { setReportTab('weekly'); setIsReportOpen(true); }}
+                title="學習紀錄與週報"
+                className="w-10 h-10 rounded-full bg-white hover:bg-sky-50 border-2 border-sky-300 shadow-md flex items-center justify-center text-xl transition-transform hover:scale-105 active:scale-95"
+              >
+                📊
+              </button>
+
+              <button
+                onClick={() => setIsParentOpen(true)}
+                title="家長設定（美語聲線與 API Key）"
+                className="w-10 h-10 rounded-full bg-white hover:bg-indigo-50 border-2 border-indigo-300 shadow-md flex items-center justify-center text-xl transition-transform hover:scale-105 active:scale-95"
+              >
+                ⚙️
+              </button>
+            </div>
+          </header>
+
+          {/* 今日聊什麼快捷選單 */}
+          <div className="w-full max-w-xl mx-auto px-2 my-1.5">
+            <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 pt-0.5 no-scrollbar">
+              <span className="text-[11px] font-black text-indigo-950 bg-indigo-100 px-2.5 py-1 rounded-xl shrink-0 flex items-center space-x-1 shadow-sm">
+                <span>💬</span>
+                <span>今日聊什麼：</span>
+              </span>
+              {TOPIC_LIST.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => handleSelectTopic(t)}
+                  disabled={cocoState === 'thinking'}
+                  className={`btn-3d text-xs font-black px-3 py-1.5 rounded-xl border flex items-center space-x-1 shrink-0 ${
+                    currentTopic === t.id
+                      ? 'bg-amber-400 text-amber-950 border-amber-600 shadow-md ring-2 ring-amber-300'
+                      : 'bg-white hover:bg-amber-50 text-slate-700 border-slate-200 shadow-sm active:border-b-0'
+                  }`}
+                >
+                  <span>{t.icon}</span>
+                  <span>{t.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 中央舞台 */}
+          <main className="flex-1 flex flex-col items-center justify-center w-full max-w-2xl mx-auto px-3 py-1">
+            <TeacherCocoComponent state={cocoState} />
+
+            <div className="w-full max-w-xl mx-auto px-2 mt-2">
+              <div className="glass-card rounded-3xl p-4 sm:p-5 shadow-card-pop relative">
+                {userTranscript && (
+                  <div className="mb-2 pb-2 border-b border-indigo-200 flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-lg">🧒</span>
+                      <span className="text-xs font-bold text-slate-500">你說：</span>
+                      <span className="text-sm sm:text-base font-extrabold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-lg border border-indigo-200">
+                        "{userTranscript}"
+                      </span>
+                    </div>
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
+                      太棒了！+1 ⭐
+                    </span>
+                  </div>
+                )}
+
+                {showSubtitle ? (
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-black tracking-wider text-indigo-900 bg-indigo-100 px-2 py-0.5 rounded-md">
+                        TEACHER COCO 說：
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-semibold">
+                        {settings.ttsEngine === 'openai' ? '✨ OpenAI Nova 真人美語' : '🌟 美式標準音 (General American)'}
+                      </span>
+                    </div>
+
+                    {cocoState === 'thinking' ? (
+                      <div className="flex items-center space-x-2 py-3 text-indigo-700 font-bold animate-pulse text-lg">
+                        <span>💭</span>
+                        <span>Teacher Coco 正在想下一個好玩的生活細節...</span>
+                      </div>
+                    ) : (
+                      <h2 className="text-xl sm:text-2xl font-black text-slate-800 tracking-wide leading-relaxed font-comic mt-2">
+                        {displaySubtitle}
+                      </h2>
+                    )}
+
+                    {currentChineseHint && (
+                      <div className="mt-3 pt-2 border-t border-indigo-100">
+                        {showChineseManual ? (
+                          <div className="flex items-start justify-between bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-sm font-bold text-amber-950">
+                            <span>💡 中文意思：{currentChineseHint}</span>
+                            <button
+                              onClick={() => setShowChineseManual(false)}
+                              className="text-xs text-amber-700 underline font-extrabold ml-2"
+                            >
+                              收起
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setShowChineseManual(true)}
+                            className="inline-flex items-center space-x-1 text-xs font-bold text-sky-600 hover:text-sky-800 bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-200"
+                          >
+                            <span>🔍</span>
+                            <span>查看中文翻譯</span>
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="py-4 text-center">
+                    <div className="inline-flex items-center space-x-2 bg-purple-50 text-purple-800 font-bold px-4 py-2 rounded-2xl border border-purple-200">
+                      <span className="text-2xl">🎧</span>
+                      <div className="text-left">
+                        <div className="text-sm font-extrabold">純聽力挑戰模式中！</div>
+                        <div className="text-xs text-purple-600">豎起小耳朵，仔細聽 Teacher Coco 說什麼～</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </main>
+
+          {/* 正下方操作區 */}
+          <footer className="w-full max-w-2xl mx-auto pb-4 pt-1 flex flex-col items-center">
+            {micError && (
+              <div className="mb-2 px-3 py-1 rounded-xl bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold">
+                ⚠️ {micError}（可直接點選下方卡片回答喔！）
+              </div>
+            )}
+
+            <div className="flex flex-col items-center justify-center my-1 relative">
+              {cocoState === 'listening' && (
+                <div
+                  className="absolute top-0 w-44 h-44 rounded-full bg-red-400 opacity-40 animate-mic-wave pointer-events-none"
+                  style={{ transform: `scale(${1 + (micVolume / 100) * 0.4})` }}
+                />
+              )}
+
+              <button
+                onClick={handleMicToggle}
+                disabled={cocoState === 'thinking'}
+                className={`relative z-10 w-32 h-32 sm:w-36 sm:h-36 rounded-full border-b-8 flex flex-col items-center justify-center cursor-pointer select-none btn-3d active:translate-y-2 active:border-b-2 ${
+                  !hasStarted
+                    ? 'bg-gradient-to-b from-amber-400 to-amber-600 border-amber-700 shadow-3d-yellow text-white'
+                    : cocoState === 'listening'
+                    ? 'bg-gradient-to-b from-rose-400 to-red-600 border-red-700 shadow-3d-red text-white animate-pulse'
+                    : cocoState === 'thinking'
+                    ? 'bg-gradient-to-b from-sky-400 to-blue-600 border-blue-700 shadow-3d-blue text-white opacity-90'
+                    : 'bg-gradient-to-b from-emerald-400 to-green-600 border-green-700 shadow-3d-green text-white'
+                }`}
+              >
+                {!hasStarted ? (
+                  <div className="text-5xl sm:text-6xl animate-bounce">🎒</div>
+                ) : cocoState === 'listening' ? (
+                  <div className="flex items-center space-x-1.5 h-12">
+                    <span className="w-2 bg-white rounded-full transition-all duration-75" style={{ height: `${Math.max(12, micVolume * 0.45)}px` }} />
+                    <span className="w-2.5 bg-white rounded-full transition-all duration-75" style={{ height: `${Math.max(18, micVolume * 0.65)}px` }} />
+                    <span className="w-2 bg-white rounded-full transition-all duration-75" style={{ height: `${Math.max(10, micVolume * 0.35)}px` }} />
+                    <span className="w-2.5 bg-white rounded-full transition-all duration-75" style={{ height: `${Math.max(16, micVolume * 0.55)}px` }} />
+                  </div>
+                ) : (
+                  <div className="text-5xl sm:text-6xl drop-shadow-md">🎙️</div>
+                )}
+              </button>
+
+              {/* 實體麥克風收音能量柱 */}
+              {cocoState === 'listening' && (
+                <div className="mt-2.5 flex items-center space-x-2 bg-white/90 backdrop-blur px-3 py-1 rounded-full border border-red-300 shadow-sm animate-fadeIn">
+                  <span className="text-xs font-black text-rose-700">收音強度:</span>
+                  <div className="w-28 h-2.5 bg-slate-200 rounded-full overflow-hidden flex">
+                    <div
+                      className={`h-full transition-all duration-100 rounded-full ${
+                        micVolume > 50 ? 'bg-emerald-500' : micVolume > 15 ? 'bg-amber-400' : 'bg-slate-300'
+                      }`}
+                      style={{ width: `${Math.max(8, micVolume)}%` }}
+                    />
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-500 min-w-[28px]">
+                    {micVolume > 15 ? '良好 🟢' : '請靠近 🟡'}
+                  </span>
+                </div>
+              )}
+
+              <div className="mt-2 text-center">
+                <p className="text-base sm:text-lg font-extrabold text-slate-800 tracking-wide">
+                  {!hasStarted
+                    ? '點我開始上課囉！🚀'
+                    : cocoState === 'listening'
+                    ? '老師正在聽...（說完再按一下送出）👂'
+                    : cocoState === 'thinking'
+                    ? 'Teacher Coco 正在思考中... 🤔'
+                    : '輪到你說囉！按一下說話 🎤'}
+                </p>
+                <p className="text-xs font-semibold text-slate-500 mt-0.5 max-w-xs truncate">
+                  {interimTranscript ? `「${interimTranscript}」` : hasStarted ? '大聲說完後按一下送出，或直接點選卡片' : '跟貓頭鷹老師打個招呼吧'}
+                </p>
+              </div>
+
+              {/* 快速引導回答卡片 */}
+              {hasStarted && suggestedReplies && suggestedReplies.length > 0 && (
+                <div className="mt-2.5 flex flex-wrap justify-center gap-2">
+                  <span className="w-full text-center text-xs font-black text-indigo-900 opacity-90">
+                    👉 試著對麥克風大聲說，或直接點選卡片：
+                  </span>
+                  {suggestedReplies.map((reply, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        sound.playPop();
+                        handleAnswer(reply.replace(/^[^\w\s]+/, '').trim());
+                      }}
+                      disabled={cocoState === 'thinking'}
+                      className="btn-3d text-xs sm:text-sm font-black bg-white hover:bg-amber-100 text-indigo-900 border-2 border-indigo-200 hover:border-amber-400 py-1.5 px-3.5 rounded-full shadow-sm active:border-b-0 transition-transform active:scale-95 disabled:opacity-50"
+                    >
+                      {reply}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* 鍵盤手動輸入 */}
+              {hasStarted && (
+                <div className="mt-2 flex flex-col items-center">
+                  {!showKeyboard ? (
+                    <button
+                      onClick={() => setShowKeyboard(true)}
+                      className="text-xs font-bold text-slate-400 hover:text-slate-600 underline flex items-center space-x-1"
+                    >
+                      <span>⌨️</span>
+                      <span>我想用打字的也可以</span>
+                    </button>
+                  ) : (
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (typedText.trim()) {
+                          handleAnswer(typedText.trim());
+                          setTypedText('');
+                          setShowKeyboard(false);
+                        }
+                      }}
+                      className="flex items-center space-x-2 mt-1 w-full max-w-xs animate-fadeIn"
+                    >
+                      <input
+                        type="text"
+                        value={typedText}
+                        onChange={(e) => setTypedText(e.target.value)}
+                        placeholder="輸入你想說的英文..."
+                        className="flex-1 px-3 py-1.5 rounded-xl border border-indigo-300 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-amber-400"
+                      />
+                      <button
+                        type="submit"
+                        disabled={!typedText.trim()}
+                        className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black shadow-sm disabled:opacity-50"
+                      >
+                        送出
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowKeyboard(false)}
+                        className="text-xs text-slate-400 hover:text-slate-600 px-1"
+                      >
+                        ✕
+                      </button>
+                    </form>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* 輔助功能鍵 */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-xl mx-auto px-4 mt-2">
+              <button
+                onClick={handleSlowReplay}
+                disabled={!hasStarted || cocoState === 'thinking'}
+                className="btn-3d flex items-center justify-center space-x-2 bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold py-3 px-3 rounded-2xl border-b-4 border-amber-600 shadow-3d-yellow active:border-b-0 disabled:opacity-50"
+              >
+                <span className="text-2xl">🐢</span>
+                <div className="text-left leading-tight">
+                  <div className="text-sm font-extrabold">再聽一次</div>
+                  <div className="text-xs opacity-80">慢速清晰</div>
+                </div>
+              </button>
+
+              <button
+                onClick={handleRequestHint}
+                disabled={!hasStarted || cocoState === 'thinking'}
+                className="btn-3d flex items-center justify-center space-x-2 bg-sky-400 hover:bg-sky-300 text-sky-950 font-bold py-3 px-3 rounded-2xl border-b-4 border-sky-600 shadow-3d-blue active:border-b-0 disabled:opacity-50"
+              >
+                <span className="text-2xl">💡</span>
+                <div className="text-left leading-tight">
+                  <div className="text-sm font-extrabold">聽不懂</div>
+                  <div className="text-xs opacity-80">中文悄悄話</div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => setShowSubtitle(!showSubtitle)}
+                className={`btn-3d flex items-center justify-center space-x-2 font-bold py-3 px-3 rounded-2xl border-b-4 active:border-b-0 ${
+                  showSubtitle
+                    ? 'bg-purple-400 hover:bg-purple-300 text-purple-950 border-purple-600 shadow-3d-purple'
+                    : 'bg-slate-300 hover:bg-slate-200 text-slate-800 border-slate-500 shadow-md'
+                }`}
+              >
+                <span className="text-2xl">{showSubtitle ? '👀' : '🙈'}</span>
+                <div className="text-left leading-tight">
+                  <div className="text-sm font-extrabold">{showSubtitle ? '隱藏字幕' : '顯示字幕'}</div>
+                  <div className="text-xs opacity-80">{showSubtitle ? '練純聽力' : '看英文字'}</div>
+                </div>
+              </button>
+
+              <button
+                onClick={handleEndLesson}
+                disabled={!hasStarted || cocoState === 'thinking'}
+                className="btn-3d flex items-center justify-center space-x-2 bg-rose-400 hover:bg-rose-300 text-rose-950 font-bold py-3 px-3 rounded-2xl border-b-4 border-rose-600 shadow-3d-red active:border-b-0 disabled:opacity-50"
+              >
+                <span className="text-2xl">🔔</span>
+                <div className="text-left leading-tight">
+                  <div className="text-sm font-extrabold">下課了</div>
+                  <div className="text-xs opacity-80">領今日獎狀</div>
+                </div>
+              </button>
+            </div>
+          </footer>
+
+          {/* 家長設定 Modal */}
+          {isParentOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+              <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border-4 border-indigo-300 relative max-h-[90vh] overflow-y-auto">
+                <button
+                  onClick={() => setIsParentOpen(false)}
+                  className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold flex items-center justify-center text-xl"
+                >
+                  ✕
+                </button>
+
+                <div className="flex items-center space-x-3 mb-5">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-100 border-2 border-indigo-300 flex items-center justify-center text-2xl text-indigo-900">
+                    🦉
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-slate-800">家長設定中心</h3>
+                    <p className="text-xs font-semibold text-slate-500">客製生活美語與三年級專屬家教大腦</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {/* TTS 語音設定 */}
+                  <div className="bg-sky-50 p-4 rounded-2xl border border-sky-200">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-sm font-extrabold text-sky-950">
+                        🎙️ 語音合成（TTS）引擎與聲線
+                      </label>
+                      <span className="text-[10px] bg-sky-200 text-sky-800 font-extrabold px-2 py-0.5 rounded-full">
+                        美式 General American
+                      </span>
+                    </div>
+                    <p className="text-xs text-sky-800 mb-2.5">
+                      已鎖定清晰道地美語發音（語速 0.93，節奏生動自然）。
+                    </p>
+
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      <button
+                        type="button"
+                        onClick={() => setSettings({ ...settings, ttsEngine: 'webSpeech' })}
+                        className={`py-2 px-3 rounded-xl border text-xs font-extrabold text-left ${
+                          settings.ttsEngine !== 'openai'
+                            ? 'bg-white border-sky-500 text-sky-950 shadow-sm ring-2 ring-sky-300'
+                            : 'bg-sky-100/60 border-sky-200 text-slate-600'
+                        }`}
+                      >
+                        <div>🌟 瀏覽器自然人聲</div>
+                        <div className="text-[10px] text-slate-500 font-normal">免金鑰，鎖定 Jenny/Aria</div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setSettings({ ...settings, ttsEngine: 'openai' })}
+                        className={`py-2 px-3 rounded-xl border text-xs font-extrabold text-left ${
+                          settings.ttsEngine === 'openai'
+                            ? 'bg-white border-indigo-600 text-indigo-950 shadow-sm ring-2 ring-indigo-300'
+                            : 'bg-indigo-50/60 border-indigo-200 text-slate-600'
+                        }`}
+                      >
+                        <div>✨ OpenAI 神經語音</div>
+                        <div className="text-[10px] text-slate-500 font-normal">頂級真人美語老師</div>
+                      </button>
+                    </div>
+
+                    {settings.ttsEngine !== 'openai' ? (
+                      <div className="bg-white p-2.5 rounded-xl border border-sky-200 text-xs text-slate-600">
+                        <span className="font-bold text-sky-900">當前鎖定人聲：</span>
+                        <span className="font-mono text-[11px] text-slate-700 ml-1 block truncate">
+                          {speech.getCurrentVoiceName()}
+                        </span>
+                        <p className="text-[10px] text-slate-400 mt-1">
+                          💡 提示：使用 Microsoft Edge 或 Chrome 瀏覽器可享有最流暢的 Natural 自然美語！
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2.5 bg-white p-3 rounded-xl border border-indigo-200">
+                        <div>
+                          <label className="block text-[11px] font-extrabold text-slate-700 mb-1">
+                            聲線選擇 (Voice)
+                          </label>
+                          <select
+                            value={settings.openaiVoice || 'nova'}
+                            onChange={(e) => setSettings({ ...settings, openaiVoice: e.target.value })}
+                            className="w-full px-2 py-1.5 rounded-lg border border-indigo-200 text-xs font-bold bg-white"
+                          >
+                            <option value="nova">nova (活潑溫暖美式女師，大推)</option>
+                            <option value="alloy">alloy (自然清晰中性)</option>
+                            <option value="shimmer">shimmer (甜美溫柔美式女聲)</option>
+                            <option value="echo">echo (溫和美式男師)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-extrabold text-slate-700 mb-1">
+                            OpenAI API Key (sk-...)
+                          </label>
+                          <input
+                            type="password"
+                            value={settings.openaiKey || ''}
+                            onChange={(e) => setSettings({ ...settings, openaiKey: e.target.value })}
+                            placeholder="貼上 OpenAI API Key (sk-...)"
+                            className="w-full px-2.5 py-1.5 rounded-lg border border-indigo-200 text-xs font-mono"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Gemini API Key */}
+                  <div className="bg-indigo-50 p-4 rounded-2xl border border-indigo-200">
+                    <label className="block text-sm font-extrabold text-indigo-950 mb-1">
+                      🔑 Gemini API Key（對話 AI 大腦）
+                    </label>
+                    <p className="text-xs text-indigo-800 mb-2">
+                      安全儲存於瀏覽器（localStorage）。未輸入時將以內建離線趣味模式運行。
+                    </p>
+                    <input
+                      type="password"
+                      value={settings.apiKey || ''}
+                      onChange={(e) => setSettings({ ...settings, apiKey: e.target.value })}
+                      placeholder="貼上 Gemini API Key (AIzaSy...)"
+                      className="w-full px-3 py-2 rounded-xl border border-indigo-300 text-sm font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-extrabold text-slate-700 mb-1">
+                      🧒 孩子小名
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.childName || ''}
+                      onChange={(e) => setSettings({ ...settings, childName: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm font-bold"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-extrabold text-slate-700 mb-1">
+                        🎂 孩子年齡與年級
+                      </label>
+                      <select
+                        value={settings.childAge || '8'}
+                        onChange={(e) => setSettings({ ...settings, childAge: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm font-bold bg-white"
+                      >
+                        <option value="8">8 歲（國小三年級，推薦）</option>
+                        <option value="9">9 歲（國小三年級 / 四年級）</option>
+                        <option value="7">7 歲（國小二年級）</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-extrabold text-slate-700 mb-1">
+                        🤖 AI 思考模型
+                      </label>
+                      <select
+                        value={settings.model || 'gemini-2.5-flash'}
+                        onChange={(e) => setSettings({ ...settings, model: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm font-bold bg-white"
+                      >
+                        <option value="gemini-2.5-flash">gemini-2.5-flash (推薦)</option>
+                        <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-extrabold text-slate-700 mb-1">
+                      📚 英文程度
+                    </label>
+                    <select
+                      value={settings.englishLevel || ''}
+                      onChange={(e) => setSettings({ ...settings, englishLevel: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm font-bold bg-white"
+                    >
+                      <option value="Level 2 國小三年級（認識自然發音、日常問答與完整短句）">
+                        Level 2 國小三年級標準（認識自然發音、日常喜好問答、完整短句）
+                      </option>
+                      <option value="Level 1 基礎啟蒙（單字辨識、跟讀與 2~3 字極短句）">
+                        Level 1 基礎啟蒙（單字辨識、跟讀引導）
+                      </option>
+                      <option value="Level 3 自信進階（能進行多輪情境日常會話與簡單故事）">
+                        Level 3 自信進階（能流暢表達原因與喜好）
+                      </option>
+                    </select>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      saveSettings(settings);
+                      setIsParentOpen(false);
+                    }}
+                    className="btn-3d w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-base border-b-4 border-indigo-800 shadow-md active:border-b-0"
+                  >
+                    💾 儲存並套用設定
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 今日成果單 / 每週週報 Modal */}
+          {isReportOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+              <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border-4 border-indigo-300 relative max-h-[92vh] overflow-y-auto">
+                <button
+                  onClick={() => setIsReportOpen(false)}
+                  className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold flex items-center justify-center text-xl"
+                >
+                  ✕
+                </button>
+
+                <div className="flex space-x-2 border-b-2 border-slate-100 pb-3 mb-6">
+                  <button
+                    onClick={() => setReportTab('today')}
+                    className={`px-4 py-2 rounded-2xl font-black text-sm transition-all ${
+                      reportTab === 'today'
+                        ? 'bg-amber-400 text-amber-950 shadow-md scale-105'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    🏆 今日學習成果單
+                  </button>
+                  <button
+                    onClick={() => setReportTab('weekly')}
+                    className={`px-4 py-2 rounded-2xl font-black text-sm transition-all ${
+                      reportTab === 'weekly'
+                        ? 'bg-sky-400 text-sky-950 shadow-md scale-105'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    📊 家長專區：每週學習週報
+                  </button>
+                </div>
+
+                {reportTab === 'today' ? (
+                  <div className="space-y-4">
+                    <div className="text-center bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 p-6 rounded-3xl border-2 border-amber-300">
+                      <div className="text-5xl mb-2 animate-bounce">🎖️</div>
+                      <h2 className="text-2xl font-black text-amber-950">
+                        {settings.childName || '小安'} 的生活美語小獎狀
+                      </h2>
+                      <p className="text-sm font-bold text-amber-800 mt-1">
+                        恭喜完成今日練習！收集了 <span className="text-amber-600 text-xl font-black">+{stars}</span> 顆星星！
+                      </p>
+                    </div>
+
+                    <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                      <h4 className="text-sm font-black text-slate-800 mb-2">
+                        📚 今日學會的生活單字：
+                      </h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {todayReport?.learnedWords?.map((w, i) => (
+                          <div key={i} className="bg-white p-2.5 rounded-xl border border-amber-200 shadow-sm flex items-center space-x-2">
+                            <span className="text-2xl">{w.emoji || '⭐'}</span>
+                            <div>
+                              <div className="text-sm font-black text-indigo-700 font-comic">{w.word}</div>
+                              <div className="text-xs text-slate-500 font-bold">{w.zh}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {todayReport?.learnedSentence && (
+                        <div className="mt-3 pt-3 border-t border-slate-200">
+                          <span className="text-xs font-black text-slate-600">🌟 今日生活精選句：</span>
+                          <div className="text-base font-black text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 mt-1">
+                            {todayReport.learnedSentence}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="bg-rose-50 p-4 rounded-2xl border border-rose-200">
+                        <div className="text-xs font-black text-rose-800 mb-1">💖 老師亮點讚美：</div>
+                        <p className="text-xs sm:text-sm font-bold text-rose-950">
+                          {todayReport?.praiseHighlight || '今天很勇敢開口，生活話題分享得好生動！'}
+                        </p>
+                      </div>
+
+                      <div className="bg-sky-50 p-4 rounded-2xl border border-sky-200">
+                        <div className="text-xs font-black text-sky-800 mb-1">💡 溫馨小建議：</div>
+                        <p className="text-xs sm:text-sm font-bold text-sky-950">
+                          {todayReport?.suggestion || '下次可以試著扮演早餐店老闆跟老師一起點餐喔！'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {todayReport?.nextTopic && (
+                      <div className="bg-amber-50 p-3 rounded-2xl border border-amber-200 flex items-center justify-between text-xs sm:text-sm font-bold text-amber-900">
+                        <span>🚀 下次上課預告：</span>
+                        <span className="font-extrabold text-amber-700">{todayReport.nextTopic}</span>
+                      </div>
+                    )}
+
+                    <button
+                      onClick={() => setIsReportOpen(false)}
+                      className="btn-3d w-full py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-black text-base border-b-4 border-emerald-700 shadow-3d-green active:border-b-0"
+                    >
+                      🎉 太棒了，收下獎狀！
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between bg-sky-50 p-4 rounded-2xl border border-sky-200">
+                      <div>
+                        <h3 className="text-base font-black text-sky-950">
+                          {settings.childName || '小安'} 的生活美語歷程
+                        </h3>
+                        <p className="text-xs text-sky-800 font-semibold">
+                          已累積 {historyList.length} 次學習紀錄
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleGenerateWeekly}
+                        disabled={isWeeklyLoading}
+                        className="btn-3d px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-black border-b-2 border-sky-700 shadow-md active:border-b-0 disabled:opacity-50"
+                      >
+                        {isWeeklyLoading ? 'AI 彙整週報中...' : '🤖 生成本週 AI 學習報告'}
+                      </button>
+                    </div>
+
+                    {weeklyData && (
+                      <div className="bg-white p-5 rounded-2xl border-2 border-sky-300 shadow-md space-y-3">
+                        <h4 className="text-lg font-black text-sky-900">📋 {weeklyData.title}</h4>
+                        <div>
+                          <h5 className="text-xs font-black text-emerald-800 mb-1">✅ 孩子本週已掌握內容：</h5>
+                          <ul className="list-disc list-inside text-xs sm:text-sm font-bold text-slate-700 space-y-1">
+                            {weeklyData.masteredSkills?.map((s, i) => <li key={i}>{s}</li>)}
+                          </ul>
+                        </div>
+                        <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-xs sm:text-sm font-bold text-emerald-950">
+                          🌱 <strong>成長亮點：</strong> {weeklyData.growthPoints}
+                        </div>
+                        <div>
+                          <h5 className="text-xs font-black text-amber-800 mb-1">🎯 建議加強與多練習處：</h5>
+                          <ul className="list-disc list-inside text-xs sm:text-sm font-bold text-slate-700 space-y-1">
+                            {weeklyData.areasToReinforce?.map((a, i) => <li key={i}>{a}</li>)}
+                          </ul>
+                        </div>
+                        <div className="bg-indigo-50 p-3 rounded-xl border border-indigo-200 text-xs sm:text-sm font-bold text-indigo-950">
+                          🧭 <strong>下週教學方向：</strong> {weeklyData.nextWeekPlan}
+                        </div>
+                        <p className="text-xs text-slate-500 italic text-center border-t pt-2">
+                          💌 {weeklyData.encouragementForParents}
+                        </p>
+                      </div>
+                    )}
+
+                    <div>
+                      <h4 className="text-xs font-extrabold text-slate-600 mb-2">歷史課程紀錄：</h4>
+                      <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+                        {historyList.length > 0 ? (
+                          historyList.map((item, idx) => (
+                            <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs flex items-center justify-between">
+                              <div>
+                                <div className="font-bold text-slate-800">
+                                  {item.date || '課程紀錄'} - 獲得 {item.stars || 0} ⭐
+                                </div>
+                                <div className="text-slate-500 truncate max-w-sm">
+                                  {item.learnedSentence || '練習生活短句'}
+                                </div>
+                              </div>
+                              <span className="text-slate-400 font-mono text-[10px]">{item.time || ''}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-xs text-slate-400 py-4 text-center">
+                            目前尚未有歷史課程紀錄，完成今天第一堂課就會記錄在這裡囉！
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
